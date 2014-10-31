@@ -1,0 +1,29 @@
+#text {
+    font-size: 1.3em;
+
+    border: 1px groove rgb(77, 166, 77);
+
+    width: 50%;
+
+    margin-left: 25%;
+    margin-right: 25%;
+    margin-bottom: 1em;
+    padding: 1em;
+}
+
+#text div {
+    display: inline-block;
+}
+
+#player-input {
+    font-size: 1.3em;
+    border: 1px groove green;
+}
+
+.selected-player-word {
+    background-color: rgb(204, 230, 204);
+}
+
+.hidden {
+    visibility: hidden;
+}

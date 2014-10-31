@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:th="http://www.thymeleaf.org">
+<head>
+	<th:block th:include="/layout :: common-meta" />
+
+	<title th:text="#{sign.up.page.title}">keybattle-sign-up</title>
+
+	<link th:href="@{/resources/css/form.css}" rel="stylesheet" />
+
+	<script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js" />
+
+	<script type="text/javascript">
+		function showRecaptcha() {
+			Recaptcha.create("6LeuzPsSAAAAAIunljRwR12jQ6Fn-G2MHG6kQZxu", 'captchadiv', {
+				tabindex: 1,
+				theme: "clean",
+				callback: Recaptcha.focus_response_field
+			});
+		}
+	</script>
+
+	<style>
+		.form-content {
+			text-align: center;
+			padding: 0;
+			margin: 0;
+		}
+		.sign-up-error {
+			color: red;
+			width: 25em;
+			text-align: center;
+
+			display: inline-block;
+		}
+		.sign-up-error br {
+			margin-bottom: 0.3em;
+		}
+	</style>
+</head>
+
+<body onload="showRecaptcha();">
+
+<div class="content-wrap">
+	<header th:include="/layout :: header"></header>
+
+	<nav th:include="/layout :: navigation"></nav>
+
+	<div class="main">
+		<section>
+			<form action="#" th:action="@{/sign-up}" th:object="${registration}" method="post" class="submit-form">
+				<div class="form-content">
+					<div class="form-text-container">
+						<input class="form-input form-text-input" type="text" name="userName" th:field="*{userName}" th:placeholder="#{login.label}" autofocus="autofocus"/>
+					</div>
+					<div class="sign-up-error" th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}">bad login</div>
+
+					<div class="form-text-container">
+						<input class="form-input form-text-input" type="password" name="password" th:field="*{password}" th:placeholder="#{password.label}"/>
+					</div>
+					<div class="sign-up-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">bad password</div>
+
+					<div class="form-text-container">
+						<input class="form-input form-text-input" type="password" name="confirmPassword" th:field="*{confirmPassword}" th:placeholder="#{confirm.password.label}"/>
+					</div>
+					<div class="sign-up-error" th:if="${#fields.hasErrors('global')}" th:errors="*{global}">bad password confirm</div>
+
+					<div class="form-text-container">
+						<input class="form-input form-text-input" type="text" name="email" th:field="*{email}" th:placeholder="#{email.label}"/>
+					</div>
+					<div class="sign-up-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">bad email</div>
+
+					<div>
+						<input class="form-input" type="submit" th:value="#{sign.up.button}"/>
+					</div>
+
+					<div id="captchadiv"></div>
+					<div class="sign-up-error" th:if="${invalidRecaptcha == true}" th:text="#{recaptcha.error}">enter value from captcha</div>
+
+					<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+				</div>
+			</form>
+		</section>
+	</div>
+</div>
+
+<footer th:include="/layout :: footer"></footer>
+
+</body>
+
+</html>

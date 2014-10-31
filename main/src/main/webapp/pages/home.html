@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:th="http://www.thymeleaf.org">
+<head>
+	<th:block th:include="/layout :: common-meta" />
+
+	<title th:text="#{home.page.title}">keybattle</title>
+
+	<script type="text/javascript" th:src="@{/resources/script/home.js}"/>
+
+	<link th:href="@{/resources/css/home.css}" rel="stylesheet" />
+</head>
+
+<body onload="init();">
+
+<div class="content-wrap">
+	<header th:include="/layout :: header"></header>
+
+	<nav th:include="/layout :: navigation"></nav>
+
+	<div class="main">
+		<section>
+			<div id="text">
+				<div th:each="token : ${text.tokens}" th:id="'player-text-token-' + ${token.position}" th:text="${token.string}"></div>
+			</div>
+			<input id="player-input" onkeypress="submit(event)" type="text" autofocus="autofocus"/>
+			<div id="timer" class="hidden"></div>
+		</section>
+	</div>
+</div>
+
+<footer th:include="/layout :: footer"></footer>
+
+</body>
+
+</html>

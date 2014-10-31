@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+	<th:block th:include="/layout :: common-meta" />
+
+	<title th:text="#{home.page.title}">keybattle</title>
+
+	<script th:src="@{/resources/lib/sockjs-0.3.4.js}"></script>
+	<script th:src="@{/resources/lib/stomp.js}"></script>
+
+	<link th:href="@{/resources/css/form.css}" rel="stylesheet" />
+
+	<script type="text/javascript" th:inline="javascript">
+		/*<![CDATA[*/
+		var stompClient = null;
+		var logLoaded = 0;
+
+		function showChatEvent(chatEvent) {
+			var chat = document.getElementById('chat-window');
+
+			var date = new Date(chatEvent.eventtime);
+			Date.prototype.chatFormat = function() {
+				var hh = this.getHours().toString();
+				var mm = this.getMinutes().toString();
+				var ss  = this.getSeconds().toString();
+				return hh + ':' + (mm[1]?mm:"0"+mm[0]) + ':' + (ss[1]?ss:"0"+ss[0]);
+			};
+			var dateString = date.chatFormat();
+
+			var messages = chatEvent.messages;
+
+			for (var i = 0; i < messages.length; i++) {
+				var message = messages[i];
+
+				var p = document.createElement('p');
+				p.className = 'message';
+
+				var userName = message.userName;
+				var text = message.text;
+
+				var messageString = dateString + '  ';
+				switch (chatEvent.type) {
+					case 'USER_JOIN':
+						messageString = messageString + text;
+						break;
+					case 'USER_LEAVE':
+						messageString = messageString + text;
+						break;
+					default:
+						messageString = messageString + userName + ': ' + text;
+				}
+
+				p.appendChild(document.createTextNode(messageString));
+				chat.appendChild(p);
+			}
+			chat.scrollTop = chat.scrollHeight;
+		}
+
+		var Command = function (execute, value) {
+			this.execute = execute;
+			this.value = value;
+		};
+
+		var ShowChatEventCommand = function(value) {
+			return new Command(showChatEvent, value);
+		};
+
+		var ShowChatEventExecutor = function () {
+			var commands = [];
+
+			return {
+				execute: function (command) {
+					commands.push(command);
+					if (logLoaded > 0) {
+						this.executeQueue();
+					}
+				},
+
+				executeQueue: function () {
+					for (var i = commands.length - 1; i >= 0; i--) {
+						var command = commands[i];
+						command.execute(command.value);
+					}
+					commands = [];
+				}
+			}
+		};
+
+		var chatEventExecutor = new ShowChatEventExecutor();
+
+		function connect() {
+			var url = /*[[@{/battle/room}]]*/ '/battle/room';
+			var socket = new SockJS(url);
+			stompClient = Stomp.over(socket);
+			stompClient.connect({}, function(frame) {
+				var userName = document.getElementById("cur-user-name").textContent;
+
+				// chat broadcast
+				stompClient.subscribe('/battle/room/chat', function(chatEvent) {
+					var message = JSON.parse(chatEvent.body);
+					chatEventExecutor.execute(new ShowChatEventCommand(message));
+				});
+
+				// chat user channel
+				stompClient.subscribe('/user/battle/room/chat', function(chatEvent) {
+					var message = JSON.parse(chatEvent.body);
+					if (message.type == 'CHAT_LIST') {
+						for (var i =  0; i <  message.events.length; i++) {
+							chatEventExecutor.execute(new ShowChatEventCommand(message.events[i]));
+						}
+						logLoaded = 1;
+						chatEventExecutor.executeQueue();
+					} else {
+						chatEventExecutor.execute(new ShowChatEventCommand(message));
+					}
+				});
+
+				// user list
+				stompClient.subscribe('/battle/room/users', function(userEvent) {
+					var message = JSON.parse(userEvent.body);
+					showUserEvent(message);
+				});
+
+				getCurrentUsers();
+				getChatLog();
+			});
+		}
+
+		function getCurrentUsers() {
+			stompClient.send("/app/battle/room/userList",{},{});
+		}
+
+		function getChatLog() {
+			stompClient.send("/app/battle/room/messageList", {}, JSON.stringify(getUserFilter()));
+		}
+
+		function disconnect() {
+			stompClient.disconnect();
+		}
+
+		function getUserFilter() {
+			var userFilter = [];
+			var userName = document.getElementById("cur-user-name").textContent;
+			var selectedUserCards = document.getElementsByClassName("user-card-selected");
+			var selfCard = document.getElementById("card-" + userName);
+			if (selectedUserCards.length > 1) {
+				for (var i = 0; i < selectedUserCards.length; i++) {
+					var card = selectedUserCards.item(i);
+					userFilter.push(card.id.substring(5));
+				}
+			}
+			var result = {users: userFilter};
+			return result;
+		}
+
+		function showUserEvent(userEvent) {
+			var userNames = userEvent.userNames;
+			if (userNames.length == 0) {
+				alert(userEvent.eventtime + " " + userEvent.type + " " + userEvent.userNames)
+			}
+			switch(userEvent.type) {
+				case 'USER_LEAVE':
+					hideUserCard(userNames[0]);
+					break;
+				case 'USER_JOIN':
+				case 'USER_LIST':
+					for (var i = 0; i < userNames.length; i++) {
+						showUserCard(userNames[i]);
+					}
+					break;
+				default:
+			}
+		}
+
+		function hideUserCard(userName) {
+			var card = document.getElementById('card-' + userName);
+			if (card != null) {
+				document.getElementById('card-' + userName).remove();
+			}
+		}
+
+		function showUserCard(userName) {
+			var card = document.getElementById('card-' + userName);
+			if (card != null) {
+				return;
+			}
+
+			var chatUsers = document.getElementById('chat-users');
+			var div = document.createElement('div');
+			div.className = 'user-card';
+			div.id = 'card-' + userName;
+
+			var avatarWrapper = document.createElement('div');
+			avatarWrapper.className = 'avatar-wrapper';
+
+			var avatar = document.createElement('img');
+			avatar.src = /*[[@{/resources/icons/noname.png}]]*/ 'resources/icons/noname.png';
+			avatar.className = 'avatar';
+			avatarWrapper.appendChild(avatar);
+			div.appendChild(avatarWrapper);
+
+			var cardLogin = document.createElement('div');
+			cardLogin.className = 'card-login';
+			cardLogin.appendChild(document.createTextNode(userName));
+			div.appendChild(cardLogin);
+
+			var curUserName = document.getElementById("cur-user-name").textContent;
+			if (curUserName == userName) {
+				div.classList.add("user-card-selected");
+			} else {
+				div.addEventListener('click', function (event) {
+					if (!this.classList.contains("user-card-selected")) {
+						this.classList.add("user-card-selected");
+					} else {
+						this.classList.remove("user-card-selected");
+					}
+				});
+			}
+
+			chatUsers.appendChild(div);
+		}
+
+		function say() {
+			var message = document.getElementById("user-message").value;
+			if (message.length > 0) {
+				stompClient.send("/app/battle/room/messages", {}, JSON.stringify({
+					'userName': null,
+					'text': message,
+					'recipients': getUserFilter()
+				}));
+				document.getElementById("user-message").value = '';
+			}
+		}
+
+		function disconnect() {
+			disconnect();
+		}
+
+		function sayOnEnter(event) {
+			if (event.keyCode == 13) {
+				say();
+			}
+		}
+		/*]]>*/
+	</script>
+
+	<style>
+		.room-wrapper {
+			text-align: center;
+
+			width: 100%;
+			height: 40em;
+
+			padding-bottom: 4px;
+		}
+
+		.room-element {
+			display: inline-block;
+			vertical-align:top;
+		}
+
+		.battle-room {
+			width: 70%;
+			height: 100%;
+
+			margin-top: 1px;
+			margin-right: 1em;
+
+			border: 1px groove green;
+
+			overflow-y: scroll;
+			text-align: center;
+		}
+
+		.battle-card {
+			width: 90%;
+			height: 3em;
+
+			margin-top: 1em;
+			margin-bottom: 1em;
+			margin-left: 5%;
+			margin-right: 5%;
+
+			border: 1px groove green;
+		}
+
+		.battle-card:hover {
+			background-color: rgb(204, 230, 204);
+		}
+
+		.wide-battle-card {
+			width: 90%;
+			height: 5em;
+
+			margin-left: 5%;
+			margin-right: 5%;
+
+			border: 1px groove green;
+		}
+
+		.wide-battle-card:hover {
+			background-color: rgb(204, 230, 204);
+		}
+
+		.chat-wrapper {
+			width: 20%;
+			height: 100%;
+
+			padding-top: 0;
+			padding-right: 2px;
+		}
+
+		.chat-users {
+			text-align: center;
+
+			width: 100%;
+			height: 20em;
+
+			border: 1px groove green;
+
+			margin-bottom: -1px;
+
+			overflow-y: scroll;
+			text-align: center;
+		}
+
+		.user-card {
+			text-align: left;
+
+			width: 90%;
+			height: 2em;
+
+			margin-top: 0.5em;
+			margin-bottom: 0.5em;
+			margin-left: 5%;
+			margin-right: 5%;
+
+			border: 1px groove green;
+
+			display: table;
+
+			cursor: pointer;
+		}
+
+		.user-card-selected {
+			background-color: rgb(204, 230, 204);
+		}
+
+		.user-card:hover {
+			background-color: rgb(204, 230, 204);
+		}
+
+		.avatar-wrapper {
+			text-align: center;
+
+			height: 100%;
+			width: 3.5em;
+
+			display: table-cell;
+			vertical-align: middle;
+		}
+
+		.avatar {
+			width: 1.5em;
+			height: 1.5em;
+			vertical-align: middle;
+		}
+
+		.card-login {
+			text-align: left;
+
+			width: auto;
+
+			display: table-cell;
+			vertical-align: middle;
+		}
+
+		#chat-window {
+			text-align: center;
+
+			width: 100%;
+			height: 19em;
+
+			border: 1px groove green;
+
+			margin-bottom: -1px;
+
+			overflow-y: scroll;
+			text-align: center;
+		}
+
+		.message {
+			text-align: left;
+			vertical-align: middle;
+			word-wrap: break-word;
+			margin: 0;
+		}
+
+		.message:nth-child(even) {
+			background-color: white;
+		}
+
+		.message:nth-child(odd) {
+			background-color: rgb(204, 230, 204);
+		}
+
+		#user-message {
+			width: 100%;
+			height: 1em;
+
+			margin: 0;
+			padding: 0;
+		}
+
+		.scrollbar::-webkit-scrollbar-track
+		{
+			background-color: rgb(204, 230, 204);
+		}
+
+		.scrollbar::-webkit-scrollbar
+		{
+			width: 10px;
+			background-color: rgb(204, 230, 204);
+		}
+
+		.scrollbar::-webkit-scrollbar-thumb
+		{
+			background-color: rgb(77, 166, 77);
+		}
+	</style>
+</head>
+
+<body onload="connect();" onbeforeunload="disconnect();">
+
+<div class="content-wrap">
+	<header th:include="/layout :: header"></header>
+
+	<nav th:include="/layout :: navigation"></nav>
+
+	<div class="main">
+		<section>
+			<div class="room-wrapper">
+				<div class="room-element battle-room scrollbar">
+					<div class="battle-card">Hello!</div>
+					<div class="battle-card">Hello!</div>
+					<div class="wide-battle-card">Hello!</div>
+					<div class="battle-card">Hello!</div>
+				</div>
+				<div class="room-element chat-wrapper">
+					<div class="chat-users scrollbar" id="chat-users">
+					</div>
+
+					<div class="scrollbar" id="chat-window">
+					</div>
+					<input class="form-input form-text-input" type="text" id="user-message" onkeypress="sayOnEnter(event);"/>
+					<div id="cur-user-name" style="display: none;" sec:authentication="name">noname</div>
+				</div>
+			</div>
+		</section>
+	</div>
+</div>
+
+<footer th:include="/layout :: footer"></footer>
+
+</body>
+
+</html>

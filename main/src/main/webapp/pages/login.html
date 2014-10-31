@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:th="http://www.thymeleaf.org">
+<head>
+	<th:block th:include="/layout :: common-meta" />
+
+	<title th:text="#{login.page.title}">keybattle-login</title>
+
+	<link th:href="@{/resources/css/form.css}" rel="stylesheet" />
+
+	<!--<script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js" />
+
+	<script type="text/javascript">
+		function showRecaptcha() {
+			Recaptcha.create("6LeuzPsSAAAAAIunljRwR12jQ6Fn-G2MHG6kQZxu", 'captchadiv', {
+				tabindex: 1,
+				theme: "clean",
+				callback: Recaptcha.focus_response_field
+			});
+		}
+	</script>-->
+</head>
+<body><!--<body onload="showRecaptcha();">-->
+
+<div class="content-wrap">
+	<header th:include="/layout :: header"></header>
+
+	<nav th:include="/layout :: navigation"></nav>
+
+	<div class="main">
+		<section>
+			<form class="submit-form" name="f" th:action="@{/login}" method="post">
+				<div>
+					<div th:if="${param.error}">
+						<div th:if="${param.error[0] == 'login_error'}" class="alert alert-error" th:text="#{error.login.message}">
+							Invalid username or password
+						</div>
+						<div th:if="${param.error[0] == 're_captcha_error'}" class="alert alert-error" th:text="#{error.login.message}">
+							Invalid recapcha value
+						</div>
+					</div>
+					<div th:if="${param.logout}" class="alert alert-success" th:text="#{success.logout.message}">
+						You have been logged out
+					</div>
+					<div th:if="${param.signup}">
+						<div th:if="${param.signup[0] == 'success'}" class="alert alert-success" th:text="#{success.sign.up.message}">
+							You have been successfully signed up
+						</div>
+					</div>
+
+					<div class="form-text-container"><label><input class="form-input form-text-input" type="text" name="username" th:placeholder="#{login.label}" autofocus="autofocus"/> </label></div>
+					<div class="form-text-container"><label><input class="form-input form-text-input" type="password" name="password" th:placeholder="#{password.label}"/> </label></div>
+					<div>
+						<input class="form-input" type="submit" th:value="#{sign.in.button}"/>
+					</div>
+
+					<!--<div id="captchadiv"></div>-->
+
+					<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+				</div>
+			</form>
+		</section>
+	</div>
+</div>
+
+<footer th:include="/layout :: footer"></footer>
+
+</body>
+
+</html>
