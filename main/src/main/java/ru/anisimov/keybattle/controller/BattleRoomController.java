@@ -11,12 +11,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import ru.anisimov.keybattle.action.SendToUserWebsocketMessage;
-import ru.anisimov.keybattle.action.SendWebsocketMessage;
+import ru.anisimov.keybattle.websocket.action.SendToUserWebsocketMessage;
+import ru.anisimov.keybattle.websocket.action.SendWebsocketMessage;
 import ru.anisimov.keybattle.exception.ApplicationError;
 import ru.anisimov.keybattle.exception.ApplicationErrorType;
-import ru.anisimov.keybattle.manager.ChatLogManager;
-import ru.anisimov.keybattle.manager.UsersOnlineManager;
+import ru.anisimov.keybattle.data.manager.ChatLogManager;
+import ru.anisimov.keybattle.data.manager.UsersOnlineManager;
 import ru.anisimov.keybattle.model.chat.*;
 
 import java.security.Principal;
@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static ru.anisimov.keybattle.config.DestinationConfig.*;
-import static ru.anisimov.keybattle.manager.UsersOnlineManager.PersistentConnection.BATTLE_ROOM;
+import static ru.anisimov.keybattle.data.manager.UsersOnlineManager.PersistentConnection.BATTLE_ROOM;
 import static ru.anisimov.keybattle.model.chat.TimeEventType.*;
 
 /**

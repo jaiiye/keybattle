@@ -11,7 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
-import ru.anisimov.keybattle.filter.AntiRobotFilter;
+import ru.anisimov.keybattle.security.filter.AntiRobotFilter;
 
 import javax.sql.DataSource;
 
@@ -24,7 +24,7 @@ import static ru.anisimov.keybattle.config.DestinationConfig.*;
  */
 @EnableWebSecurity
 @Configuration
-@ComponentScan(basePackages = {"ru.anisimov.keybattle.filter"})
+@ComponentScan(basePackages = {"ru.anisimov.keybattle.security.filter"})
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private AntiRobotFilter antiRobotFilter;

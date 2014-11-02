@@ -2,7 +2,7 @@ package ru.anisimov.keybattle.model.text;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.anisimov.keybattle.service.interfaces.TextService;
+import ru.anisimov.keybattle.data.service.interfaces.TextService;
 
 import java.util.List;
 import java.util.stream.Collectors;

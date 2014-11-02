@@ -6,11 +6,10 @@ CREATE DATABASE `keybattle`
 
 USE keybattle;
 
-DROP TABLE battle_text;
-DROP TABLE user_stat;
-DROP TABLE stat_type;
-DROP TABLE user_role;
+DROP TABLE user_history;
+DROP TABLE history_action;
 DROP TABLE user_info;
+DROP TABLE user_role;
 DROP TABLE user;
 
 CREATE TABLE user (
@@ -18,75 +17,87 @@ CREATE TABLE user (
 	username VARCHAR(45) NOT NULL,
 	password VARCHAR(45) NOT NULL,
 	email VARCHAR(45) NOT NULL,
-	creation_time datetime not null default CURRENT_TIME,
-	modification_time datetime not null default CURRENT_TIME,
+	creation_time TIMESTAMP NOT NULL DEFAULT now(),
+	modification_time TIMESTAMP NOT NULL DEFAULT now(),
+	locked TINYINT(1) NOT NULL DEFAULT 0,
 	enabled TINYINT(1) NOT NULL DEFAULT 1,
 
 	PRIMARY KEY (id),
 
-	KEY sk_username_idx (username),
-	CONSTRAINT sk_username UNIQUE (username),
+	KEY idx_u_username (username),
+	CONSTRAINT uk_u_username UNIQUE (username),
 
-	KEY sk_email_idx (email),
-	CONSTRAINT sk_email UNIQUE (email)
-);
-
-CREATE TABLE user_info (
-	user_id BIGINT NOT NULL,
-	creation_time datetime not null default CURRENT_TIME,
-	modification_time datetime not null default CURRENT_TIME,
-	name VARCHAR(200),
-	age INT(3),
-	gender INT(1),
-	dob DATE,
-	country VARCHAR(100),
-	status VARCHAR(140),
-	avatar MEDIUMBLOB,
-
-	PRIMARY KEY (user_id),
-
-	KEY fk_user_id_idx (user_id),
-	CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES user(id)
+	KEY idx_u_email (email),
+	CONSTRAINT uk_u_email UNIQUE (email)
 );
 
 CREATE TABLE user_role (
 	id BIGINT NOT NULL AUTO_INCREMENT,
 	user_id BIGINT NOT NULL,
 	role VARCHAR(45) NOT NULL,
+	creation_time TIMESTAMP NOT NULL DEFAULT now(),
+	modification_time TIMESTAMP NOT NULL DEFAULT now(),
+	enabled INT(1) NOT NULL DEFAULT 1,
 
 	PRIMARY KEY (id),
 
-	UNIQUE KEY uniq_user_id_role (user_id, role),
+	KEY idx_ur_user_id_role (user_id, role),
+	CONSTRAINT uk_ur_user_id_role UNIQUE (user_id, role),
 
-	KEY fk_user_id_idx (user_id),
-	CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES user(id)
+	KEY idx_ur_user_id (user_id),
+	CONSTRAINT fk_ur_user_id FOREIGN KEY (user_id) REFERENCES user (id)
 );
 
-CREATE TABLE stat_type (
-	id INT(4) NOT NULL AUTO_INCREMENT,
+CREATE TABLE user_info (
+	user_id BIGINT NOT NULL,
+	creation_time TIMESTAMP NOT NULL DEFAULT now(),
+	modification_time TIMESTAMP NOT NULL DEFAULT now(),
+	name VARCHAR(200) DEFAULT NULL,
+	gender INT(1) NOT NULL DEFAULT 2,
+	dob DATE DEFAULT NULL,
+	country VARCHAR(100) DEFAULT NULL,
+	status VARCHAR(140) DEFAULT NULL,
+	avatar MEDIUMBLOB DEFAULT NULL,
+	hidden INT(1) NOT NULL DEFAULT 1,
+
+	PRIMARY KEY (user_id),
+
+	CONSTRAINT fk_ui_user_id FOREIGN KEY (user_id) REFERENCES user (id)
+);
+
+CREATE VIEW v_user_info
+AS
+	SELECT
+		u.*,
+		DATE_FORMAT(NOW(), '%Y') - DATE_FORMAT(dob, '%Y') - (DATE_FORMAT(NOW(), '00-%m-%d')
+																												 < DATE_FORMAT(dob, '00-%m-%d')) AS age
+	FROM user_info u;
+
+CREATE TABLE history_action (
+	id INT(4) NOT NULL,
 	name VARCHAR(200) NOT NULL,
-	description VARCHAR(400)
+	description VARCHAR(400),
+
+	PRIMARY KEY (id)
 );
 
-CREATE TABLE user_stat (
+CREATE TABLE user_history (
 	id BIGINT NOT NULL AUTO_INCREMENT,
 	user_id BIGINT NOT NULL,
-	stat_type_id INT(4) NOT NULL,
-	value BLOB NOT NULL,
+	history_action_id INT(4) NOT NULL,
+	creation_time TIMESTAMP NOT NULL DEFAULT now(),
+	actor_id BIGINT NOT NULL,
 
 	PRIMARY KEY (id),
 
-	UNIQUE KEY uniq_user_id_stat_type_id (user_id, stat_type_id),
+	KEY idx_uh_user_id (user_id),
+	CONSTRAINT fk_uh_user_id FOREIGN KEY (user_id) REFERENCES user (id),
 
-	KEY fk_user_id_idx (user_id),
-	CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES user(id),
-
-	KEY fk_stat_type_id_idx (stat_type_id),
-	CONSTRAINT fk_stat_type_id FOREIGN KEY (stat_type_id) REFERENCES stat_type(id)
+	KEY idx_uh_history_action_id (history_action_id),
+	CONSTRAINT fk_uh_history_action_id FOREIGN KEY (history_action_id) REFERENCES history_action (id)
 );
 
-CREATE TABLE battle_text (
-	id BIGINT NOT NULL auto_increment,
-	text LONGTEXT NOT NULL,
-
+create table text (
+	id BIGINT NOT NULL AUTO_INCREMENT,
+	
 );

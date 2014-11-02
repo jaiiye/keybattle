@@ -7,9 +7,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.anisimov.keybattle.model.user.KeybattleUserBuilder;
+import ru.anisimov.keybattle.model.user.UserBuilder;
 import ru.anisimov.keybattle.model.user.Registration;
-import ru.anisimov.keybattle.service.interfaces.UserService;
+import ru.anisimov.keybattle.data.service.interfaces.UserService;
 
 import javax.validation.Valid;
 
@@ -48,7 +48,7 @@ public class RegistrationController {
 			return SIGN_UP_ADDRESS;
 		}
 
-		userService.addUser(new KeybattleUserBuilder(registration)
+		userService.addUser(new UserBuilder(registration)
 				.addRole("USER")
 				.build()
 		);

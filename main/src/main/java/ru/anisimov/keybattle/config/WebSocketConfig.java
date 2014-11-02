@@ -9,8 +9,8 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
-import ru.anisimov.keybattle.interceptor.UserOnlineInterceptor;
-import ru.anisimov.keybattle.manager.UsersOnlineManager;
+import ru.anisimov.keybattle.websocket.interceptor.UserOnlineInterceptor;
+import ru.anisimov.keybattle.data.manager.UsersOnlineManager;
 
 import static ru.anisimov.keybattle.config.DestinationConfig.BATTLE_ROOM_ADDRESS;
 
@@ -21,7 +21,7 @@ import static ru.anisimov.keybattle.config.DestinationConfig.BATTLE_ROOM_ADDRESS
  */
 @Configuration
 @EnableWebSocketMessageBroker
-@ComponentScan("ru.anisimov.keybattle.manager")
+@ComponentScan("ru.anisimov.keybattle.data.manager")
 public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 	private UserOnlineInterceptor userOnlineInterceptor;
 

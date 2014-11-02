@@ -6,8 +6,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import ru.anisimov.keybattle.service.interfaces.TextService;
-import ru.anisimov.keybattle.service.persitence.MemoryTextService;
+import ru.anisimov.keybattle.data.service.interfaces.TextService;
+import ru.anisimov.keybattle.data.service.persitence.MemoryTextService;
 
 import java.util.Arrays;
 import java.util.HashMap;

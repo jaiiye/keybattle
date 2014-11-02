@@ -9,8 +9,8 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import ru.anisimov.keybattle.model.text.Text;
-import ru.anisimov.keybattle.service.interfaces.TextService;
-import ru.anisimov.keybattle.service.persitence.MemoryTextService;
+import ru.anisimov.keybattle.data.service.interfaces.TextService;
+import ru.anisimov.keybattle.data.service.persitence.MemoryTextService;
 
 import javax.sql.DataSource;
 import java.io.BufferedReader;
@@ -26,7 +26,7 @@ import java.util.List;
  *         10/7/14
  */
 @Configuration
-@ComponentScan(basePackages = {"ru.anisimov.keybattle.service", "ru.anisimov.keybattle.model"})
+@ComponentScan(basePackages = {"ru.anisimov.keybattle.data.service", "ru.anisimov.keybattle.model"})
 public class CoreConfig {
 	@Bean
 	public TextService textService() {

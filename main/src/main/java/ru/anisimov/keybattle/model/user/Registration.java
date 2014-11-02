@@ -3,8 +3,8 @@ package ru.anisimov.keybattle.model.user;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.ScriptAssert;
-import ru.anisimov.keybattle.validation.UniqueEmail;
-import ru.anisimov.keybattle.validation.UniqueLogin;
+import ru.anisimov.keybattle.security.validation.UniqueEmail;
+import ru.anisimov.keybattle.security.validation.UniqueLogin;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
