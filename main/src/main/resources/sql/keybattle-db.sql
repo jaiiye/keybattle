@@ -17,10 +17,10 @@ CREATE TABLE user (
 	username VARCHAR(45) NOT NULL,
 	password VARCHAR(45) NOT NULL,
 	email VARCHAR(45) NOT NULL,
-	creation_time TIMESTAMP NOT NULL DEFAULT now(),
-	modification_time TIMESTAMP NOT NULL DEFAULT now(),
 	locked TINYINT(1) NOT NULL DEFAULT 0,
 	enabled TINYINT(1) NOT NULL DEFAULT 1,
+	creation_time TIMESTAMP NOT NULL DEFAULT now(),
+	modification_time TIMESTAMP NOT NULL DEFAULT now(),
 
 	PRIMARY KEY (id),
 
@@ -35,9 +35,9 @@ CREATE TABLE user_role (
 	id BIGINT NOT NULL AUTO_INCREMENT,
 	user_id BIGINT NOT NULL,
 	role VARCHAR(45) NOT NULL,
+	enabled INT(1) NOT NULL DEFAULT 1,
 	creation_time TIMESTAMP NOT NULL DEFAULT now(),
 	modification_time TIMESTAMP NOT NULL DEFAULT now(),
-	enabled INT(1) NOT NULL DEFAULT 1,
 
 	PRIMARY KEY (id),
 
@@ -50,8 +50,6 @@ CREATE TABLE user_role (
 
 CREATE TABLE user_info (
 	user_id BIGINT NOT NULL,
-	creation_time TIMESTAMP NOT NULL DEFAULT now(),
-	modification_time TIMESTAMP NOT NULL DEFAULT now(),
 	name VARCHAR(200) DEFAULT NULL,
 	gender INT(1) NOT NULL DEFAULT 2,
 	dob DATE DEFAULT NULL,
@@ -59,6 +57,8 @@ CREATE TABLE user_info (
 	status VARCHAR(140) DEFAULT NULL,
 	avatar MEDIUMBLOB DEFAULT NULL,
 	hidden INT(1) NOT NULL DEFAULT 1,
+	creation_time TIMESTAMP NOT NULL DEFAULT now(),
+	modification_time TIMESTAMP NOT NULL DEFAULT now(),
 
 	PRIMARY KEY (user_id),
 
@@ -85,8 +85,8 @@ CREATE TABLE user_history (
 	id BIGINT NOT NULL AUTO_INCREMENT,
 	user_id BIGINT NOT NULL,
 	history_action_id INT(4) NOT NULL,
-	creation_time TIMESTAMP NOT NULL DEFAULT now(),
 	actor_id BIGINT NOT NULL,
+	creation_time TIMESTAMP NOT NULL DEFAULT now(),
 
 	PRIMARY KEY (id),
 
@@ -97,7 +97,58 @@ CREATE TABLE user_history (
 	CONSTRAINT fk_uh_history_action_id FOREIGN KEY (history_action_id) REFERENCES history_action (id)
 );
 
-create table text (
+CREATE TABLE dict_type (
+	id INT NOT NULL,
+	name VARCHAR(200) NOT NULL,
+	description VARCHAR(400),
+
+	PRIMARY KEY (id),
+
+	KEY idx_dt_name (name),
+	CONSTRAINT uk_dt_name UNIQUE (name)
+);
+
+CREATE TABLE dict (
+	type_id INT NOT NULL,
+	term_id BIGINT NOT NULL,
+	locale VARCHAR(20) NOT NULL,
+	value TEXT NOT NULL,
+
+	PRIMARY KEY (term_id, locale),
+
+	KEY idx_d_type_id (type_id)
+);
+
+CREATE TABLE tag (
 	id BIGINT NOT NULL AUTO_INCREMENT,
-	
+	term_id BIGINT NOT NULL,
+	deleted INT(1) NOT NULL DEFAULT 0,
+	creation_time TIMESTAMP NOT NULL DEFAULT now(),
+	modification_time TIMESTAMP NOT NULL DEFAULT now(),
+
+	PRIMARY KEY (id),
+
+	KEY idx_t_name (name),
+	CONSTRAINT uk_t_name UNIQUE (name)
+);
+
+CREATE TABLE text_tag (
+	text_id BIGINT NOT NULL,
+	tag_id BIGINT NOT NULL,
+
+	KEY idx_tt_text_id (text_id),
+
+	KEY idx_tt_tag_id (tag_id),
+	CONSTRAINT uk_tt_text_id_tag_id UNIQUE (text_id, tag_id)
+);
+
+CREATE TABLE text (
+	id BIGINT NOT NULL AUTO_INCREMENT,
+	text LONGTEXT NOT NULL,
+	deleted INT(1) NOT NULL DEFAULT 0,
+	creation_time TIMESTAMP NOT NULL DEFAULT now(),
+	modification_time TIMESTAMP NOT NULL DEFAULT now(),
+
+	creation_time TIMESTAMP NOT NULL DEFAULT now(),
+	modification_time TIMESTAMP NOT NULL DEFAULT now()
 );

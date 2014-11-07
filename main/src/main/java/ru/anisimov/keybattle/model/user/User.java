@@ -1,6 +1,7 @@
 package ru.anisimov.keybattle.model.user;
 
 import org.springframework.security.core.GrantedAuthority;
+import ru.anisimov.keybattle.core.HasId;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,7 +11,7 @@ import java.util.Collection;
  *         valter@yandex-team.ru
  *         10/10/14
  */
-public class User extends org.springframework.security.core.userdetails.User {
+public class User extends org.springframework.security.core.userdetails.User implements HasId {
 	private long id;
 	private String email;
 
@@ -20,6 +21,7 @@ public class User extends org.springframework.security.core.userdetails.User {
 		this.email = email;
 	}
 
+	@Override
 	public long getId() {
 		return id;
 	}

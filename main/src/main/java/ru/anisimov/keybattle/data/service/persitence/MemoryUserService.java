@@ -1,7 +1,7 @@
 package ru.anisimov.keybattle.data.service.persitence;
 
 import ru.anisimov.keybattle.model.user.User;
-import ru.anisimov.keybattle.data.service.AbstractUserService;
+import ru.anisimov.keybattle.data.service.interfaces.impl.AbstractUserService;
 
 import java.util.ArrayList;
 import java.util.Collections;

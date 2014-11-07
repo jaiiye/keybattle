@@ -31,7 +31,7 @@ public class UsersOnlineManager {
 	private UserManager userManager;
 	@Autowired
 	private ChatLogManager chatLogManager;
-
+	@Autowired
 	private SimpMessagingTemplate template;
 
 	private Map<String, PersistentConnection> sessionPlaces = new HashMap<>();
@@ -39,11 +39,6 @@ public class UsersOnlineManager {
 
 	{
 		places.put(PersistentConnection.BATTLE_ROOM, new Place());
-	}
-
-	@Autowired
-	public UsersOnlineManager(SimpMessagingTemplate template) {
-		this.template = template;
 	}
 
 	synchronized public boolean addUserSession(String userName, String sessionId, PersistentConnection placeType) {

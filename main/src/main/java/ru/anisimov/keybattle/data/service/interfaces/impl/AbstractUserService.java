@@ -1,4 +1,4 @@
-package ru.anisimov.keybattle.data.service;
+package ru.anisimov.keybattle.data.service.interfaces.impl;
 
 import ru.anisimov.keybattle.model.user.User;
 import ru.anisimov.keybattle.data.service.interfaces.UserService;

@@ -23,6 +23,8 @@ import static ru.anisimov.keybattle.config.DestinationConfig.BATTLE_ROOM_ADDRESS
 @EnableWebSocketMessageBroker
 @ComponentScan("ru.anisimov.keybattle.data.manager")
 public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
+	private static final String DESTINATION_PREFIX = "/app";
+	
 	private UserOnlineInterceptor userOnlineInterceptor;
 
 	@Override
@@ -30,7 +32,7 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 		config.enableSimpleBroker(
 				BATTLE_ROOM_ADDRESS + "/"
 		);
-		config.setApplicationDestinationPrefixes("/app");
+		config.setApplicationDestinationPrefixes(DESTINATION_PREFIX);
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package ru.anisimov.keybattle.model.history;
 
+import ru.anisimov.keybattle.core.HasId;
+
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
@@ -8,7 +10,7 @@ import java.util.Arrays;
  *         valter@yandex-team.ru
  *         10/31/14
  */
-public class UserHistoryRecord {
+public class UserHistoryRecord implements HasId {
 	private long id;
 	private long userId;
 	private int actionId;
@@ -17,6 +19,7 @@ public class UserHistoryRecord {
 	private LocalDateTime creationTime;
 	private long actorId;
 
+	@Override
 	public long getId() {
 		return id;
 	}

@@ -7,6 +7,5 @@ package ru.anisimov.keybattle.model.stat;
  */
 public enum StatType {
 	WORDS_PRINTED,
-	TEXTS_FINISHED,
-
+	TEXTS_FINISHED
 }
