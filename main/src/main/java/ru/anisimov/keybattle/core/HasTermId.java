@@ -3,8 +3,8 @@ package ru.anisimov.keybattle.core;
 /**
  * @author Ivan Anisimov
  *         valter@yandex-team.ru
- *         10/22/14
+ *         11/10/14
  */
-public interface ObjectBuilder<T> {
-	T build();
+public class HasTermId {
+	public long getTermId;
 }

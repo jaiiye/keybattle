@@ -53,7 +53,7 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
 	@Bean
 	public UsersOnlineManager usersOnlineManager(SimpMessagingTemplate template) {
-		UsersOnlineManager usersOnlineManager = new UsersOnlineManager(template);
+		UsersOnlineManager usersOnlineManager = new UsersOnlineManager();
 		userOnlineInterceptor.setUsersOnlineManager(usersOnlineManager);
 		return usersOnlineManager;
 	}

@@ -1,0 +1,7 @@
+CREATE OR REPLACE VIEW V_USER_INFO
+AS
+	SELECT
+		U.*,
+		DATE_FORMAT(NOW(), '%Y') - DATE_FORMAT(DOB, '%Y') - (DATE_FORMAT(NOW(), '00-%m-%d')
+																												 < DATE_FORMAT(DOB, '00-%m-%d')) AS AGE
+	FROM USER_INFO U

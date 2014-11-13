@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+			http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        	http://www.liquibase.org/xml/ns/dbchangelog-ext 
+        	http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="1-USER" author="valter">
+		<sqlFile path="sql/tables/user.sql"/>
+		<rollback>DROP TABLE USER</rollback>
+	</changeSet>
+	
+	<changeSet id="2-USER_ROLE" author="valter">
+		<sqlFile path="sql/tables/user_role.sql"/>
+		<rollback>DROP TABLE USER_ROLE</rollback>
+	</changeSet>
+
+	<changeSet id="3-USER_INFO" author="valter">
+		<sqlFile path="sql/tables/user_info.sql"/>
+		<rollback>DROP TABLE USER_INFO</rollback>
+	</changeSet>
+	
+	<changeSet id="4-V_USER_INFO" author="valter" runOnChange="true">
+		<sqlFile path="sql/views/v_user_info.sql"/>
+		<rollback>DROP VIEW V_USER_INFO</rollback>
+	</changeSet>
+
+	<changeSet id="5-HISTORY_ACTION" author="valter">
+		<sqlFile path="sql/tables/history_action.sql"/>
+		<rollback>DROP TABLE HISTORY_ACTION</rollback>
+	</changeSet>
+
+	<changeSet id="6-USER_HISTORY" author="valter">
+		<sqlFile path="sql/tables/user_history.sql"/>
+		<rollback>DROP TABLE USER_HISTORY</rollback>
+	</changeSet>
+
+	<changeSet id="7-DICT_TYPE" author="valter">
+		<sqlFile path="sql/tables/dict_type.sql"/>
+		<rollback>DROP TABLE DICT_TYPE</rollback>
+	</changeSet>
+
+	<changeSet id="8-DICT" author="valter">
+		<sqlFile path="sql/tables/dict.sql"/>
+		<rollback>DROP TABLE DICT</rollback>
+	</changeSet>
+
+	<changeSet id="9-TAG" author="valter">
+		<sqlFile path="sql/tables/tag.sql"/>
+		<rollback>DROP TABLE TAG</rollback>
+	</changeSet>
+
+	<!--<changeSet id="10-TEXT" author="valter">
+		<sqlFile path="sql/tables/text.sql"/>
+		<rollback>DROP TABLE TEXT</rollback>
+	</changeSet>
+	
+	<changeSet id="11-TEXT_TAG" author="valter">
+		<sqlFile path="sql/tables/text_tag.sql"/>
+		<rollback>DROP TABLE TEXT_TAG</rollback>
+	</changeSet>-->
+	
+	<changeSet id="12-HISTORY_ACTION-DATA" author="valter">
+		<sqlFile path="sql/data/history_action.sql"/>
+		<rollback>DELETE FROM HISTORY_ACTION</rollback>
+	</changeSet>
+</databaseChangeLog>

@@ -40,7 +40,7 @@ public class DbUserHistoryServiceTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		jdbcTemplate.update("delete from user_history");
+		jdbcTemplate.update("DELETE FROM USER_HISTORY");
 	}
 	
 	@Test

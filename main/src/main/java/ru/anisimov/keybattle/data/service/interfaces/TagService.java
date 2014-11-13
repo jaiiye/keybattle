@@ -1,5 +1,6 @@
 package ru.anisimov.keybattle.data.service.interfaces;
 
+import ru.anisimov.keybattle.model.locale.Term;
 import ru.anisimov.keybattle.model.tag.Tag;
 
 import java.util.List;
@@ -15,14 +16,10 @@ public interface TagService {
 	Tag getTag(String tagName);
 	
 	List<Tag> getTags();
-	
-	List<String> getTagNames();
 
-	boolean addTag(long tagId);
-	
 	boolean addTag(String tagName);
+	
+	boolean addTag(Term term);
 
 	boolean removeTag(long tagId);
-	
-	boolean removeTag(String tagName);
 }

@@ -37,7 +37,7 @@ public class DbUserInfoServiceTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		jdbcTemplate.update("delete from user_info");
+		jdbcTemplate.update("DELETE FROM USER_INFO");
 	}
 
 	@Test

@@ -21,29 +21,29 @@ import static java.util.Collections.EMPTY_LIST;
 public class DbUserHistoryService implements UserHistoryService {
 	private static final RowMapper<UserHistoryRecord> HISTORY_RECORD_ROW_MAPPER = (rs, rowNum) -> {
 		UserHistoryRecord result = new UserHistoryRecord();
-		result.setId(rs.getLong("id"));
-		result.setUserId(rs.getLong("user_id"));
-		result.setActionId(rs.getInt("history_action_id"));
-		result.setActorId(rs.getInt("actor_id"));
-		result.setCreationTime(rs.getTimestamp("creation_time").toLocalDateTime());
-		result.setActionName(rs.getString("name"));
-		result.setActionDescription(rs.getString("description"));
+		result.setId(rs.getLong("ID"));
+		result.setUserId(rs.getLong("USER_ID"));
+		result.setActionId(rs.getInt("HISTORY_ACTION_ID"));
+		result.setActorId(rs.getInt("ACTOR_ID"));
+		result.setCreationTime(rs.getTimestamp("CREATION_TIME").toLocalDateTime());
+		result.setActionName(rs.getString("NAME"));
+		result.setActionDescription(rs.getString("DESCRIPTION"));
 		return result;
 	};
 
-	private static final String SELECT_RECORDS_BY_ACTOR_ID = "select h.*, a.name, a.description from user_history h " +
-			" left join history_action a on (h.history_action_id = a.id) where h.actor_id = ? " +
-			" order by h.creation_time";
+	private static final String SELECT_RECORDS_BY_ACTOR_ID = "SELECT H.*, A.NAME, A.DESCRIPTION FROM USER_HISTORY H " +
+			" LEFT JOIN HISTORY_ACTION A ON (H.HISTORY_ACTION_ID = A.ID) WHERE H.ACTOR_ID = ? " +
+			" ORDER BY H.CREATION_TIME";
 
-	private static final String SELECT_RECORDS_BY_USER_ID = "select h.*, a.name, a.description from user_history h " +
-			" left join history_action a on (h.history_action_id = a.id) where h.user_id = ? " +
-			" order by h.creation_time";
+	private static final String SELECT_RECORDS_BY_USER_ID = "SELECT H.*, A.NAME, A.DESCRIPTION FROM USER_HISTORY H " +
+			" LEFT JOIN HISTORY_ACTION A ON (H.HISTORY_ACTION_ID = A.ID) WHERE H.USER_ID = ? " +
+			" ORDER BY H.CREATION_TIME";
 
-	private static final String SELECT_RECORDS_BY_USER_ID_ACTION_ID = "select h.*, a.name, a.description from user_history h " +
-			" left join history_action a on (h.history_action_id = a.id) where h.user_id = ? and a.id = ?" +
-			" order by h.creation_time";
-	private static final String ADD_RECORD = "insert into user_history (user_id, history_action_id, actor_id) " +
-			" values (?, ?, ?)";
+	private static final String SELECT_RECORDS_BY_USER_ID_ACTION_ID = "SELECT H.*, A.NAME, A.DESCRIPTION FROM USER_HISTORY H " +
+			" LEFT JOIN HISTORY_ACTION A ON (H.HISTORY_ACTION_ID = A.ID) WHERE H.USER_ID = ? AND A.ID = ?" +
+			" ORDER BY H.CREATION_TIME";
+	private static final String ADD_RECORD = "INSERT INTO USER_HISTORY (USER_ID, HISTORY_ACTION_ID, ACTOR_ID) " +
+			" VALUES (?, ?, ?)";
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;

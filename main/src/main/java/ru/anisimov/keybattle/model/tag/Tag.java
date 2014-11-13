@@ -1,6 +1,10 @@
 package ru.anisimov.keybattle.model.tag;
 
+import org.springframework.context.i18n.LocaleContextHolder;
 import ru.anisimov.keybattle.core.HasId;
+import ru.anisimov.keybattle.model.locale.Term;
+
+import java.util.Locale;
 
 /**
  * @author Ivan Anisimov
@@ -9,12 +13,12 @@ import ru.anisimov.keybattle.core.HasId;
  */
 public class Tag implements HasId {
 	private long id;
-	private String name;
+	private Term name;
 
 	public Tag() {
 	}
 
-	public Tag(long id, String name) {
+	public Tag(long id, Term name) {
 		this.id = id;
 		this.name = name;
 	}
@@ -28,11 +32,16 @@ public class Tag implements HasId {
 		this.id = id;
 	}
 
-	public String getName() {
+	public String getLocalizedName() {
+		Locale locale = LocaleContextHolder.getLocale();
+		return name.get(locale);
+	}
+
+	public Term getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(Term name) {
 		this.name = name;
 	}
 }

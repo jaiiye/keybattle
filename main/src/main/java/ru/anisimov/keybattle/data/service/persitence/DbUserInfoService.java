@@ -22,37 +22,37 @@ import java.util.List;
 public class DbUserInfoService implements UserInfoService {
 	private static final RowMapper<UserInfo> USER_INFO_ROW_MAPPER = (rs, rowNum) -> {
 		UserInfo result = new UserInfo();
-		result.setUserId(rs.getLong("user_id"));
-		result.setName(rs.getString("name"));
-		int age = rs.getInt("age");
+		result.setUserId(rs.getLong("USER_ID"));
+		result.setName(rs.getString("NAME"));
+		int age = rs.getInt("AGE");
 		result.setAge(age == 0 ? null : age);
-		result.setGender(Gender.values()[rs.getInt("gender")]);
-		Date date = rs.getDate("dob");
+		result.setGender(Gender.values()[rs.getInt("GENDER")]);
+		Date date = rs.getDate("DOB");
 		result.setDateOfBirth(date == null ? null : date.toLocalDate());
-		result.setCountry(rs.getString("country"));
-		result.setStatus(rs.getString("status"));
-		result.setAvatar(rs.getBytes("avatar"));
-		result.setHidden(rs.getInt("hidden") == 1);
+		result.setCountry(rs.getString("COUNTRY"));
+		result.setStatus(rs.getString("STATUS"));
+		result.setAvatar(rs.getBytes("AVATAR"));
+		result.setHidden(rs.getInt("HIDDEN") == 1);
 		return result;
 	};
 
-	private static final String SELECT_INFO_BY_USER_ID = "select * from v_user_info where user_id = ?";
+	private static final String SELECT_INFO_BY_USER_ID = "SELECT * FROM V_USER_INFO WHERE USER_ID = ?";
 
-	private static final String SELECT_INFO_WITHOUT_AVATAR_BY_USER_ID = "select user_id, name, age, gender, dob, " +
-			" country, status, null avatar, hidden from v_user_info where user_id = ?";
+	private static final String SELECT_INFO_WITHOUT_AVATAR_BY_USER_ID = "SELECT USER_ID, NAME, AGE, GENDER, DOB, " +
+			" COUNTRY, STATUS, NULL AVATAR, HIDDEN FROM V_USER_INFO WHERE USER_ID = ?";
 
-	private static final String SELECT_AVATAR_BY_USER_ID = "select avatar from v_user_info where user_id = ?";
+	private static final String SELECT_AVATAR_BY_USER_ID = "SELECT AVATAR FROM V_USER_INFO WHERE USER_ID = ?";
 
-	private static final String SHOW_USER_INFO_BY_USER_ID = "update user_info set modification_time = now(), " +
-			" hidden = ? where user_id = ?";
+	private static final String SHOW_USER_INFO_BY_USER_ID = "UPDATE USER_INFO SET MODIFICATION_TIME = NOW(), " +
+			" HIDDEN = ? WHERE USER_ID = ?";
 
-	private static final String CHANGE_USER_AVATAR_BY_USER_ID = "update user_info set modification_time = now(), " +
-			" avatar = ? where user_id = ?";
+	private static final String CHANGE_USER_AVATAR_BY_USER_ID = "UPDATE USER_INFO SET MODIFICATION_TIME = NOW(), " +
+			" AVATAR = ? WHERE USER_ID = ?";
 
-	private static final String CHANGE_USER_INFO_BY_USER_ID = "update user_info set modification_time = now(), " +
-			" name = ?, gender = ?, dob = ?, country = ?, status = ?, hidden = ? where user_id = ?";
+	private static final String CHANGE_USER_INFO_BY_USER_ID = "UPDATE USER_INFO SET MODIFICATION_TIME = NOW(), " +
+			" NAME = ?, GENDER = ?, DOB = ?, COUNTRY = ?, STATUS = ?, HIDDEN = ? WHERE USER_ID = ?";
 
-	private static final String ADD_INITIAL_INFO = "insert into user_info (user_id) values (?)";
+	private static final String ADD_INITIAL_INFO = "INSERT INTO USER_INFO (USER_ID) VALUES (?)";
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;

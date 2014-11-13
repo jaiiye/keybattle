@@ -31,8 +31,8 @@ public class DbUserServiceTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		jdbcTemplate.update("delete from user_role");
-		jdbcTemplate.update("delete from user");
+		jdbcTemplate.update("DELETE FROM USER_ROLE");
+		jdbcTemplate.update("DELETE FROM USER");
 	}
 	
 	@Test
@@ -65,7 +65,7 @@ public class DbUserServiceTest {
 		assertTrue(user.isAccountNonExpired());
 		assertTrue(user.isCredentialsNonExpired());
 
-		jdbcTemplate.update("delete from user_role");
+		jdbcTemplate.update("DELETE FROM USER_ROLE");
 		user = userService.getUserByUserName(userName);
 		assertEquals(userName, user.getUsername());
 		assertEquals(password, user.getPassword());

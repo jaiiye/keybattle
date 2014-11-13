@@ -32,54 +32,54 @@ public class DbUserService implements UserService {
 	private static final Logger log = Logger.getLogger(DbUserService.class);
 
 	private static final RowMapper<User> USER_ROW_MAPPER = (rs, rowNum) -> new User(
-			rs.getLong("id"),
-			rs.getString("username"),
-			rs.getString("password"),
-			rs.getInt("locked") == 1,
-			rs.getInt("enabled") == 1,
-			rs.getString("roles") != null ? Arrays.stream(rs.getString("roles").split(","))
+			rs.getLong("ID"),
+			rs.getString("USERNAME"),
+			rs.getString("PASSWORD"),
+			rs.getInt("LOCKED") == 1,
+			rs.getInt("ENABLED") == 1,
+			rs.getString("ROLES") != null ? Arrays.stream(rs.getString("ROLES").split(","))
 					.peek(String::trim)
 					.map(role -> new SimpleGrantedAuthority(role))
 					.collect(Collectors.toList()) : new ArrayList<>(),
-			rs.getString("email")
+			rs.getString("EMAIL")
 	);
 
 
-	private static final String ADD_USER = "insert into user(username, password, email) values (?,?,?)";
+	private static final String ADD_USER = "INSERT INTO USER(USERNAME, PASSWORD, EMAIL) VALUES (?,?,?)";
 	
-	private static final String ADD_USER_ROLE = "insert into user_role(user_id, role) values (?,?) " +
-			" on duplicate key update modification_time = now(), enabled = 1";
+	private static final String ADD_USER_ROLE = "INSERT INTO USER_ROLE(USER_ID, ROLE) VALUES (?,?) " +
+			" ON DUPLICATE KEY UPDATE MODIFICATION_TIME = NOW(), ENABLED = 1";
 	
-	private static final String REMOVE_USER_ROLE = "update user_role set modification_time = now(), " +
-			" enabled = 0 where user_id = ? and role = ?";
+	private static final String REMOVE_USER_ROLE = "UPDATE USER_ROLE SET MODIFICATION_TIME = NOW(), " +
+			" ENABLED = 0 WHERE USER_ID = ? AND ROLE = ?";
 
 	
-	private static final String LOCK_USER_BY_ID = "update user set modification_time = now(), locked = ? where id = ?";
+	private static final String LOCK_USER_BY_ID = "UPDATE USER SET MODIFICATION_TIME = NOW(), LOCKED = ? WHERE ID = ?";
 	
-	private static final String LOCK_USER_BY_NAME = "update user set modification_time = now(), locked = ? where username = ?";
+	private static final String LOCK_USER_BY_NAME = "UPDATE USER SET MODIFICATION_TIME = NOW(), LOCKED = ? WHERE USERNAME = ?";
 	
-	private static final String ENABLE_USER_BY_ID = "update user set modification_time = now(), enabled = ? where id = ?";
+	private static final String ENABLE_USER_BY_ID = "UPDATE USER SET MODIFICATION_TIME = NOW(), ENABLED = ? WHERE ID = ?";
 	
-	private static final String ENABLE_USER_BY_NAME = "update user set modification_time = now(), enabled = ? where username = ?";
+	private static final String ENABLE_USER_BY_NAME = "UPDATE USER SET MODIFICATION_TIME = NOW(), ENABLED = ? WHERE USERNAME = ?";
 
 
-	private static final String SELECT_USERS = "select u.id, u.username, u.password, u.email, u.locked, u.enabled, GROUP_CONCAT(r.role) roles " +
-			" from user u left join (select * from user_role where enabled = 1) r on (u.id = r.user_id) group by u.id";
+	private static final String SELECT_USERS = "SELECT U.ID, U.USERNAME, U.PASSWORD, U.EMAIL, U.LOCKED, U.ENABLED, GROUP_CONCAT(R.ROLE) ROLES " +
+			" FROM USER U LEFT JOIN (SELECT * FROM USER_ROLE WHERE ENABLED = 1) R ON (U.ID = R.USER_ID) GROUP BY U.ID";
 
-	private static final String SELECT_USERS_BY_ROLE = "select u.id, u.username, u.password, u.email, u.locked, u.enabled, GROUP_CONCAT(r.role) roles " +
-			" from user u left join (select * from user_role where enabled = 1) r on (u.id = r.user_id) " +
-			" 	where u.id in (select distinct user_id from user_role where role = ? and enabled = 1) group by u.id";
+	private static final String SELECT_USERS_BY_ROLE = "SELECT U.ID, U.USERNAME, U.PASSWORD, U.EMAIL, U.LOCKED, U.ENABLED, GROUP_CONCAT(R.ROLE) ROLES " +
+			" FROM USER U LEFT JOIN (SELECT * FROM USER_ROLE WHERE ENABLED = 1) R ON (U.ID = R.USER_ID) " +
+			" 	WHERE U.ID IN (SELECT DISTINCT USER_ID FROM USER_ROLE WHERE ROLE = ? AND ENABLED = 1) GROUP BY U.ID";
 
-	private static final String SELECT_USER_BY_ID = "select u.id, u.username, u.password, u.email, u.locked, u.enabled, GROUP_CONCAT(r.role) roles " +
-			" from user u left join (select * from user_role where enabled = 1) r on (u.id = r.user_id) where u.id = ? group by u.id";
+	private static final String SELECT_USER_BY_ID = "SELECT U.ID, U.USERNAME, U.PASSWORD, U.EMAIL, U.LOCKED, U.ENABLED, GROUP_CONCAT(R.ROLE) ROLES " +
+			" FROM USER U LEFT JOIN (SELECT * FROM USER_ROLE WHERE ENABLED = 1) R ON (U.ID = R.USER_ID) WHERE U.ID = ? GROUP BY U.ID";
 	
-	private static final String SELECT_USER_BY_USERNAME = "select u.id, u.username, u.password, u.email, u.locked, u.enabled, GROUP_CONCAT(r.role) roles " +
-			" from user u left join (select * from user_role where enabled = 1) r on (u.id = r.user_id) where u.username = ? group by u.id";
+	private static final String SELECT_USER_BY_USERNAME = "SELECT U.ID, U.USERNAME, U.PASSWORD, U.EMAIL, U.LOCKED, U.ENABLED, GROUP_CONCAT(R.ROLE) ROLES " +
+			" FROM USER U LEFT JOIN (SELECT * FROM USER_ROLE WHERE ENABLED = 1) R ON (U.ID = R.USER_ID) WHERE U.USERNAME = ? GROUP BY U.ID";
 
-	private static final String SELECT_USER_ID_BY_USERNAME = "select id from user where username = ?";
+	private static final String SELECT_USER_ID_BY_USERNAME = "SELECT ID FROM USER WHERE USERNAME = ?";
 
-	private static final String SELECT_USER_BY_EMAIL = "select u.id, u.username, u.password, u.email, u.locked, u.enabled, GROUP_CONCAT(r.role) roles " +
-			" from user u left join (select * from user_role where enabled = 1) r on (u.id = r.user_id) where u.email = ? group by u.id";
+	private static final String SELECT_USER_BY_EMAIL = "SELECT U.ID, U.USERNAME, U.PASSWORD, U.EMAIL, U.LOCKED, U.ENABLED, GROUP_CONCAT(R.ROLE) ROLES " +
+			" FROM USER U LEFT JOIN (SELECT * FROM USER_ROLE WHERE ENABLED = 1) R ON (U.ID = R.USER_ID) WHERE U.EMAIL = ? GROUP BY U.ID";
 
 	
 	@Autowired

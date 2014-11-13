@@ -6,6 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.Ordered;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.*;
@@ -15,7 +16,7 @@ import org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
-import ru.anisimov.keybattle.model.locale.Locales;
+import ru.anisimov.keybattle.model.locale.LocaleStrings;
 import ru.anisimov.keybattle.model.params.Params;
 
 import static ru.anisimov.keybattle.config.DestinationConfig.LOGIN_ADDRESS;
@@ -65,7 +66,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 	@Bean
 	public LocaleResolver localeResolver() {
 		CookieLocaleResolver cookieLocaleResolver = new CookieLocaleResolver();
-		cookieLocaleResolver.setDefaultLocale(Locales.DEFAULT);
+		cookieLocaleResolver.setDefaultLocale(StringUtils.parseLocaleString(LocaleStrings.DEFAULT));
 		return cookieLocaleResolver;
 	}
 
